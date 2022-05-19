@@ -1,11 +1,27 @@
 import { Box, ListItem, Stack, Typography } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GetItems from './getItems';
 import NewItem from './newItem';
+import { listAll } from '../../services/itemsServices';
+import useAuth from '../../hooks/authHook';
+import ItemById from './itemById';
 
 export default function Items() {
+  const { token } = useAuth();
   const [renderPage, setRenderPage] = useState('initial');
+  const [itemId, setItemId] = useState();
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    async function loadPage() {
+      const promisse = await listAll(token);
+
+      setProducts(promisse);
+    }
+
+    loadPage();
+  }, [renderPage]);
 
   const initial = (
     <>
@@ -26,7 +42,11 @@ export default function Items() {
           <Typography fontWeight='bold'>Adicionar produto</Typography>
         </Box>
       </ListItem>
-      <GetItems />
+      <GetItems
+        products={products}
+        setRenderPage={setRenderPage}
+        setItemId={setItemId}
+      />
     </>
   );
 
@@ -42,7 +62,10 @@ export default function Items() {
           </Typography>
         </ListItem>
         {renderPage === 'initial' && initial}
-        {renderPage === 'newItem' && <NewItem />}
+        {renderPage === 'newItem' && <NewItem setRenderPage={setRenderPage} />}
+        {renderPage === 'itemById' && (
+          <ItemById itemId={itemId} setRenderPage={setRenderPage} />
+        )}
       </Stack>
     </Box>
   );

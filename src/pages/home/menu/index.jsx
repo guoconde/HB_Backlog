@@ -15,7 +15,8 @@ export default function Menu({ handlePath }) {
       sx={{
         width: 320,
         maxWidth: '100%',
-        height: '100vh',
+        height: '100%',
+        minHeight: '100vh',
         padding: '0',
         borderRadius: '0',
         backgroundColor: '#c71f1f',

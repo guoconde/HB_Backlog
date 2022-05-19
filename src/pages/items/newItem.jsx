@@ -1,16 +1,12 @@
-import {
-  Button,
-  Container,
-  MenuItem,
-  NativeSelect,
-  Select,
-  styled,
-  TextField,
-} from '@mui/material';
+import { Box, Button, MenuItem, Select, TextField } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import useAuth from '../../hooks/authHook';
+import { insertOne } from '../../services/itemsServices';
 
-export default function NewItem() {
+export default function NewItem({ setRenderPage }) {
+  const { token } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -18,16 +14,34 @@ export default function NewItem() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+  async function handleInsert(data) {
+    let newData = { ...data, price: parseFloat(data.price) };
+
+    if (data.picture === '') {
+      newData = {
+        ...newData,
+        picture:
+          'https://odoo-community.org/web/image/product.template/1044/image_1024?unique=993283e',
+      };
+    }
+
+    await insertOne(newData, token)
+      .then(() => {
+        setRenderPage('initial');
+      })
+      .catch((error) => {
+        if (error.response.status) alert('Produto já cadastrado');
+      });
+  }
+
+  const onSubmit = (data) => handleInsert(data);
 
   return (
-    <Container
+    <Box
       component='form'
       onSubmit={handleSubmit(onSubmit)}
       sx={{
-        '& .MuiTextField-root': { m: 1, width: '25ch' },
-        width: '300px',
-        height: '100vh',
+        // '& .MuiTextField-root': { m: 1, width: '25ch' },
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
@@ -37,63 +51,87 @@ export default function NewItem() {
       }}
       noValidate
     >
-      <StyledInput
+      <TextField
         error={!!errors.name}
         id='outlined-basic'
         label='Nome'
         variant='outlined'
         {...register('name', { required: true })}
       />
-      <StyledInput
+      <TextField
         error={!!errors.picture}
+        defaultValue={null}
         id='outlined-basic'
         label='Imagem'
         variant='outlined'
         {...register('picture')}
       />
-      <StyledInput
+      <TextField
         error={!!errors.price}
+        type='number'
         id='outlined-basic'
         label='Preço'
         variant='outlined'
         {...register('price', { required: true })}
       />
-      <StyledInput
+      <TextField
         error={!!errors.description}
         id='outlined-basic'
         label='Descrição'
         variant='outlined'
         {...register('description', { required: true })}
       />
-      <NativeSelect variant='outlined' {...register('type')}>
-        <option value={10}>Ten</option>
-        <option value={20}>Twenty</option>
-        <option value={30}>Thirty</option>
-      </NativeSelect>
+      <Select
+        {...register('type')}
+        defaultValue='hamburger'
+        label='Tipo'
+        sx={{ width: '235px' }}
+      >
+        <MenuItem value='hamburger'>Hamburguer</MenuItem>
+        <MenuItem value='bebida'>Bebida</MenuItem>
+        <MenuItem value='porcao'>Porção</MenuItem>
+        <MenuItem value='combo'>Combo</MenuItem>
+        <MenuItem value='promocao'>Promoção</MenuItem>
+      </Select>
 
-      <StyledButton type='submit' variant='contained'>
-        Entrar
-      </StyledButton>
-    </Container>
+      <Button
+        type='submit'
+        variant='contained'
+        sx={{
+          width: '235px',
+          height: '50px',
+          backgroundColor: 'green',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '16px',
+
+          '&:hover': {
+            backgroundColor: 'darkGreen',
+          },
+        }}
+      >
+        Cadastrar
+      </Button>
+      <Button
+        sx={{
+          width: '235px',
+          height: '50px',
+          backgroundColor: 'red',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '16px',
+
+          '&:hover': {
+            backgroundColor: 'darkRed',
+          },
+        }}
+        onClick={() => setRenderPage('initial')}
+        className='cancel'
+        type='button'
+        variant='contained'
+      >
+        Cancelar
+      </Button>
+    </Box>
   );
 }
-
-const StyledInput = styled(TextField)({
-  width: '300px',
-  height: '50px',
-  padding: 0,
-  margin: 0,
-});
-
-const StyledButton = styled(Button)({
-  width: '200px',
-  height: '50px',
-  backgroundColor: 'red',
-  color: 'white',
-  fontWeight: 'bold',
-  fontSize: '16px',
-
-  '&:hover': {
-    backgroundColor: 'darkRed',
-  },
-});
