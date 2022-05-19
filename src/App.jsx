@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ResetStyle } from './assets/css/reset';
+import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './context/authContext';
 import Home from './pages/home';
 import Login from './pages/login';
@@ -9,7 +9,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <ResetStyle />
+        <CssBaseline />
         <Routes>
           <Route path='/' element={<Login />} />
           <Route path='/home' element={<Home />} />

@@ -17,7 +17,9 @@
     "jsx-quotes": "off",
     "react/jsx-props-no-spreading": "off",
     "comma-dangle": "off",
-    "react/prop-types": "off",
-    "import/prefer-default-export": "off"
+    "react/prop-types": 0,
+    "import/prefer-default-export": "off",
+    "react/jsx-one-expression-per-line": 0,
+    "object-curly-newline": 0
   }
 }

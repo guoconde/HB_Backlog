@@ -1,3 +1,4 @@
+import { Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/authHook';
@@ -23,11 +24,17 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex' }}>
-      <Menu handlePath={handlePath} />
-      {renderPage === 'orders' && <Orders path='orders' />}
-      {renderPage === 'items' && <Items path='items' />}
-      {renderPage === 'promotions' && <Promotions path='promotions' />}
-      {renderPage === 'reports' && <Reports path='reports' />}
+      <Grid container spacing={1}>
+        <Grid item xs={4}>
+          <Menu handlePath={handlePath} />
+        </Grid>
+        <Grid item xs={7}>
+          {renderPage === 'orders' && <Orders path='orders' />}
+          {renderPage === 'items' && <Items path='items' />}
+          {renderPage === 'promotions' && <Promotions path='promotions' />}
+          {renderPage === 'reports' && <Reports path='reports' />}
+        </Grid>
+      </Grid>
     </div>
   );
 }
